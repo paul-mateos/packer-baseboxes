@@ -1,0 +1,47 @@
+{
+  "variables": {
+    "vm_name": "centos7-minimal",
+    "cpu": "2",
+    "ram_size": "2048",
+    "disk_size": "21440",
+    "iso_url": "c:/iso/CentOS-7-x86_64-Minimal-1804.iso",
+    "iso_checksum_type": "sha1",
+    "iso_checksum": "714acc0aefb32b7d51b515e25546835e55a90da9fb00417fbee2d03a62801efd",
+    "username": "packer",
+    "password": "packer"
+  },
+  "builders": [
+    {
+      "vm_name": "{{user `vm_name`}}",
+      "type": "vmware-iso",
+      "boot_wait": "5s",
+      "disk_size": "{{user `disk_size`}}",
+      "guest_os_type": "centos7",
+      "headless": true,
+      "http_directory": "http/centos7",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "communicator": "ssh",
+      "ssh_username": "{{user `username`}}",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "5m",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+      ],
+      "shutdown_command": "echo 'packer' | sudo -S -E shutdown -P now",
+      "skip_compaction": false,
+      "vmx_data": {
+        "gui.fitguestusingnativedisplayresolution": "FALSE",
+        "memsize": "{{user `ram_size`}}",
+        "numvcpus": "{{user `cpu`}}",
+        "virtualHW.version": "10",
+        "scsi0.virtualDev": "lsisas1068",
+        "ethernet0.virtualDev": "vmxnet3",
+        "ethernet0.present": "TRUE",
+        "ethernet0.connectionType": "custom",
+        "ethernet0.vnet": "vmnet8"
+      }
+    }
+  ]
+}
